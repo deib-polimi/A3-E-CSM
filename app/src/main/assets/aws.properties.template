@@ -1,0 +1,3 @@
+aws_key=<YOUR KEY>
+aws_secret=<YOUR SECRET>
+aws_region=<YOUR REGION - e.g., us-west-2>
