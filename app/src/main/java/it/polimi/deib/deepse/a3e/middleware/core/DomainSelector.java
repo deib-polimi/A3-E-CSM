@@ -14,7 +14,6 @@ import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
 
 public class DomainSelector {
 
-
     public Domain selectDomainForRequirements(A3EFunction function, List<Domain> domains){
         int maxMatches = 0;
         int matchIndex = -1;
@@ -29,7 +28,6 @@ public class DomainSelector {
                 matchIndex = i;
             }
         }
-
 
         Domain domain;
         if (matchIndex >= 0)

@@ -16,7 +16,7 @@ public class AWSDomain extends Domain {
     private A3EFunction pingFunction = new A3EFunction("ping", null);
 
     public AWSDomain(Context context) {
-        super("72.21.214.144", new AWSLambdaInvocationResolver(context), Requirement.NONE, Requirement.CLOUD, Requirement.FAST_COMPUTATION);
+        super("72.21.214.144", new AWSLambdaInvocationResolver(context), Requirement.EVERYWHERE, Requirement.CLOUD, Requirement.FAST_COMPUTATION);
     }
 
     @Override

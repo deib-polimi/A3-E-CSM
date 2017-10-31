@@ -13,7 +13,7 @@ public class LocalDomain extends Domain {
 
     public LocalDomain() {
         super("localhost", new LocalJSInvocationResolver(),
-                Requirement.NONE, Requirement.SMALL_LATENCY);
+                Requirement.EVERYWHERE, Requirement.LOW_LATENCY);
     }
 
 
@@ -24,6 +24,5 @@ public class LocalDomain extends Domain {
 
     @Override
     public void notifySelection(A3EFunction function) {
-
     }
 }

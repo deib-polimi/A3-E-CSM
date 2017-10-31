@@ -34,7 +34,7 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener {
         // create A3E
         a3e = new A3EFacade(this);
         // create function (from file)
-        f1 =  new A3EFileFunction(this, "ping", R.raw.ping, Requirement.NONE, Requirement.CLOUD);
+        f1 =  new A3EFileFunction(this, "ping", R.raw.ping, Requirement.EVERYWHERE, Requirement.CLOUD);
         // register function
         a3e.registerFunction(f1);
 

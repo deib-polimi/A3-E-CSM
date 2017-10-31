@@ -26,7 +26,6 @@ public class A3EFacade implements A3E {
 
     @Override
     public void executeFunction(Activity activity, A3EFunction function, String payload, A3EFunction.Callback callback) {
-        payload = payload.replace("'", "\"");
         Domain domain = selector.selectDomainForRequirements(function,  manager.getAvailableDomainsForFunction(function));
         domain.notifySelection(function);
         domain.executeFunction(activity, function, payload, callback);

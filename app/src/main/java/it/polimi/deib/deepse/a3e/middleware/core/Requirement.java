@@ -7,8 +7,5 @@ import java.util.Set;
  */
 
 public enum Requirement {
-    NONE, SMALL_LATENCY, FAST_COMPUTATION, CLOUD
-
-
-
+    LOW_LATENCY, FAST_COMPUTATION, EVERYWHERE, EDGE, CLOUD
 }
