@@ -8,6 +8,7 @@ import org.liquidplayer.webkit.javascriptcore.JSValue;
 
 import it.polimi.deib.deepse.a3e.middleware.core.A3EFunction;
 import it.polimi.deib.deepse.a3e.middleware.resolvers.InvocationResolver;
+import it.polimi.deib.deepse.a3e.middleware.resolvers.means.JSInvocationMean;
 
 /**
  * Created by giovanniquattrocchi on 30/10/17.
@@ -16,11 +17,12 @@ import it.polimi.deib.deepse.a3e.middleware.resolvers.InvocationResolver;
 public class LocalJSInvocationResolver implements InvocationResolver {
 
     @Override
-    public A3EFunction.FunctionResult invoke(A3EFunction function, String payload) {
+    public <T> A3EFunction.FunctionResult invoke(A3EFunction<T> function, T payload) {
 
         JSContext context = new JSContext();
-
-        JSValue value = context.evaluateScript("("+function.getCode()+")"+"("+payload+")");
+        JSInvocationMean<T> mean = new JSInvocationMean<>(payload, context);
+        mean.accept(function);
+        JSValue value = context.evaluateScript(mean.getScript());
 
         String resultValue;
         if (!value.isUndefined() && !value.isNull())
@@ -30,4 +32,6 @@ public class LocalJSInvocationResolver implements InvocationResolver {
 
         return new A3EFunction.FunctionResult(resultValue);
     }
+
+
 }

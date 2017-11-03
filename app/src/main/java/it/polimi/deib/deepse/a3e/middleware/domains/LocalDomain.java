@@ -12,8 +12,9 @@ public class LocalDomain extends Domain {
 
 
     public LocalDomain() {
-        super("localhost", new LocalJSInvocationResolver(),
+        super("127.0.0.1", "localhost", new LocalJSInvocationResolver(),
                 Requirement.EVERYWHERE, Requirement.LOW_LATENCY);
+        this.latency = 0;
     }
 
 

@@ -15,10 +15,9 @@
         android:inputType="textMultiLine"
         android:id="@+id/payloadEditText"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.3"
+        android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Payload"
+        android:hint="File name"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp" />
 
@@ -27,7 +26,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="-"
-        android:textSize="20dp"
         android:textStyle="bold" />
 
     <Button

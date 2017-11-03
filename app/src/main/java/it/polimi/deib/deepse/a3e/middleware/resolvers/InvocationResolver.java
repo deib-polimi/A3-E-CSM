@@ -8,6 +8,6 @@ import it.polimi.deib.deepse.a3e.middleware.core.A3EFunction;
 
 public interface InvocationResolver {
 
-    public A3EFunction.FunctionResult invoke(A3EFunction function, String payload);
+    public <T> A3EFunction.FunctionResult invoke(A3EFunction<T> function, T payload);
 
 }

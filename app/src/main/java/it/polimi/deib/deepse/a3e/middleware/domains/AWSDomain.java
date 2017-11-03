@@ -13,15 +13,14 @@ import it.polimi.deib.deepse.a3e.middleware.utils.Commons;
 
 public class AWSDomain extends Domain {
 
-    private A3EFunction pingFunction = new A3EFunction("ping", null);
-
     public AWSDomain(Context context) {
-        super("72.21.214.144", new AWSLambdaInvocationResolver(context), Requirement.EVERYWHERE, Requirement.CLOUD, Requirement.FAST_COMPUTATION);
+        super("72.21.214.144", "aws", new AWSLambdaInvocationResolver(context), Requirement.EVERYWHERE, Requirement.CLOUD, Requirement.FAST_COMPUTATION);
     }
 
     @Override
-    public boolean ping() {
-       return Commons.ping(getHost());
+    public synchronized boolean ping() {
+        this.latency = Commons.ping(getHost());
+        return this.latency > 0;
     }
 
     @Override

@@ -7,17 +7,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
+import it.polimi.deib.deepse.a3e.middleware.resolvers.means.JSInvocationMean;
+
 
 /**
  * Created by giovanniquattrocchi on 31/10/17.
  */
 
-public class A3EFileFunction extends A3EFunction {
+public abstract class A3EJSFunction<T> extends A3EFunction<T> {
 
-    public A3EFileFunction(Context context, String uniqueName, int resId, Requirement... requirements) {
-        super(uniqueName, null, requirements);
-        setCode(readRawTextFile(context, resId));
+    private String code;
+
+    public A3EJSFunction(final Context context, String uniqueName, final int resId, Requirement... requirements) {
+        super(context, uniqueName, requirements);
+        this.code = readRawTextFile(context, resId);
     }
 
     private static String readRawTextFile(Context ctx, int resId)
@@ -38,5 +41,14 @@ public class A3EFileFunction extends A3EFunction {
             return null;
         }
         return text.toString();
+    }
+
+    protected String getCode() {
+        return code;
+    }
+
+    @Override
+    public void visit(JSInvocationMean<T> mean) {
+        mean.setScript("("+code+")"+"("+mean.getPayload()+")");
     }
 }

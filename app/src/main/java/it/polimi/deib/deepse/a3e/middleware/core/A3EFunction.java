@@ -1,35 +1,41 @@
 package it.polimi.deib.deepse.a3e.middleware.core;
 
 import android.content.Context;
+import android.content.res.Resources;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import it.polimi.deib.deepse.a3e.middleware.resolvers.means.AWSInvocationMean;
+import it.polimi.deib.deepse.a3e.middleware.resolvers.means.InvocationMeanVisitor;
+import it.polimi.deib.deepse.a3e.middleware.resolvers.means.JSInvocationMean;
+import it.polimi.deib.deepse.a3e.middleware.resolvers.means.RestInvocationMean;
+
+
 /**
  * Created by giovanniquattrocchi on 30/10/17.
  */
 
-public class A3EFunction {
+public abstract class A3EFunction<T> implements InvocationMeanVisitor<T> {
 
+    private Context context;
     private String uniqueName;
-    private String code;
     private Set<Requirement> requirements;
 
-    public A3EFunction(String uniqueName, String code, Requirement... requirements){
+
+    public A3EFunction(Context context, String uniqueName, Requirement... requirements){
         this.uniqueName = uniqueName;
-        this.code = code;
         this.requirements = new HashSet<>(Arrays.asList(requirements));
+        this.context = context;
     }
 
-
-
-    public String getCode() {
-        return code;
+    protected void setCurrentContext(Context context){
+        this.context = context;
     }
 
-    protected void setCode(String code){
-        this.code = code;
+    public Context getContext() {
+        return context;
     }
 
     public String getUniqueName() {
@@ -38,6 +44,21 @@ public class A3EFunction {
 
     public Set<Requirement> getRequirements() {
         return new HashSet<>(requirements);
+    }
+
+    @Override
+    public void visit(RestInvocationMean<T> mean) {
+        throw new RuntimeException("Not Supported");
+    }
+
+    @Override
+    public void visit(AWSInvocationMean<T> mean) {
+        throw new RuntimeException("Not Supported");
+    }
+
+    @Override
+    public void visit(JSInvocationMean<T> mean) {
+        throw new RuntimeException("Not Supported");
     }
 
     public interface Callback {

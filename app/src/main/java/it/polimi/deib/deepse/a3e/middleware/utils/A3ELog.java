@@ -13,11 +13,12 @@ public class A3ELog {
 
     private static List<String> log = new ArrayList<>();
     private static List<Listener> listeners = new ArrayList<>();
-    public static synchronized void append(String message){
+
+    public static synchronized void append(String what, String message){
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("YY/MM//dd HH:mm:ss");
         System.out.println();
-        message = sdf.format(date)+" "+message;
+        message = sdf.format(date)+" "+what+" - "+message;
         log.add(message);
         for (Listener listener : listeners)
             listener.onLogUpdate(message);

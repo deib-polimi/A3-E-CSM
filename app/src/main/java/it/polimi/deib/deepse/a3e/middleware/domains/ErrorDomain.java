@@ -12,7 +12,7 @@ public class ErrorDomain extends Domain {
     private static ErrorDomain instance;
 
     private ErrorDomain() {
-        super("error_domain", new ErrorResolver());
+        super("error", "error_domain", new ErrorResolver());
     }
 
     public static ErrorDomain errorDomain(){
@@ -34,7 +34,7 @@ public class ErrorDomain extends Domain {
     public static class ErrorResolver implements InvocationResolver {
 
         @Override
-        public A3EFunction.FunctionResult invoke(A3EFunction function, String payload) {
+        public <T> A3EFunction.FunctionResult invoke(A3EFunction<T> function, T payload) {
             return new A3EFunction.FunctionResult();
         }
     }

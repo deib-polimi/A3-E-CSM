@@ -2,6 +2,7 @@ package it.polimi.deib.deepse.a3e.middleware.core;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import it.polimi.deib.deepse.a3e.middleware.domains.Domain;
@@ -14,7 +15,9 @@ import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
 
 public class DomainSelector {
 
+
     public Domain selectDomainForRequirements(A3EFunction function, List<Domain> domains){
+
         int maxMatches = 0;
         int matchIndex = -1;
 
@@ -35,7 +38,7 @@ public class DomainSelector {
         else
             domain = ErrorDomain.errorDomain();
 
-        A3ELog.append("SELECTED DOMAIN "+domain+" for function "+function.getUniqueName());
+        A3ELog.append("*Domain Selection*", "host: "+domain+" for function: "+function.getUniqueName());
 
         return domain;
     }
