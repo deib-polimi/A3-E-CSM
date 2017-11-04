@@ -1,6 +1,6 @@
 package it.polimi.deib.deepse.a3e.middleware.domains;
 
-import it.polimi.deib.deepse.a3e.middleware.core.Requirement;
+import it.polimi.deib.deepse.a3e.middleware.core.LocationRequirement;
 
 /**
  * Created by giovanniquattrocchi on 03/11/17.
@@ -8,6 +8,11 @@ import it.polimi.deib.deepse.a3e.middleware.core.Requirement;
 
 public class EdgeRestDomain extends RestDomain {
     protected EdgeRestDomain(String ip, String host) {
-        super(ip, host, Requirement.EVERYWHERE, Requirement.EDGE, Requirement.LOW_LATENCY, Requirement.FAST_COMPUTATION);
+        super(ip, host, LocationRequirement.EDGE);
+    }
+
+    @Override
+    public long getComputationPower() {
+        return 4;
     }
 }

@@ -1,5 +1,6 @@
 package it.polimi.deib.deepse.a3e.middleware.domains;
 
+import it.polimi.deib.deepse.a3e.middleware.core.LocationRequirement;
 import it.polimi.deib.deepse.a3e.middleware.resolvers.InvocationResolver;
 import it.polimi.deib.deepse.a3e.middleware.core.A3EFunction;
 
@@ -12,7 +13,7 @@ public class ErrorDomain extends Domain {
     private static ErrorDomain instance;
 
     private ErrorDomain() {
-        super("error", "error_domain", new ErrorResolver());
+        super("error", "error_domain", new ErrorResolver(), LocationRequirement.LOCAL);
     }
 
     public static ErrorDomain errorDomain(){
@@ -24,6 +25,11 @@ public class ErrorDomain extends Domain {
     @Override
     public boolean ping() {
         return false;
+    }
+
+    @Override
+    public long getComputationPower() {
+        return -1;
     }
 
     @Override

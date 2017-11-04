@@ -18,8 +18,8 @@ public abstract class A3EJSFunction<T> extends A3EFunction<T> {
 
     private String code;
 
-    public A3EJSFunction(final Context context, String uniqueName, final int resId, Requirement... requirements) {
-        super(context, uniqueName, requirements);
+    public A3EJSFunction(final Context context, String uniqueName, final int resId, LocationRequirement... locationRequirements) {
+        super(context, uniqueName, locationRequirements);
         this.code = readRawTextFile(context, resId);
     }
 

@@ -3,6 +3,7 @@ package it.polimi.deib.deepse.a3e.middleware.utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by giovanniquattrocchi on 31/10/17.
@@ -19,12 +20,12 @@ public class Commons {
         try
         {
             long i = System.currentTimeMillis();
-            Process  mIpAddrProcess = runtime.exec("/system/bin/ping -c 1 -W 0.5 "+host);
-            int mExitValue = mIpAddrProcess.waitFor();
+            Process  mIpAddrProcess = runtime.exec("/system/bin/ping -c 1 -W 1.0 "+host);
+            mIpAddrProcess.waitFor(1000, TimeUnit.MILLISECONDS);
             long f=System.currentTimeMillis();
+            int mExitValue = mIpAddrProcess.exitValue();
             System.out.println(" mExitValue "+mExitValue+" ms: "+(f-i));
-            if(mExitValue==0){
-
+            if(mIpAddrProcess.exitValue() == 0){
                 System.out.println();
                 return f-i;
             }else{
@@ -36,7 +37,7 @@ public class Commons {
             ignore.printStackTrace();
             System.out.println(" Exception:"+ignore);
         }
-        catch (IOException e)
+        catch (Exception e)
         {
             e.printStackTrace();
             System.out.println(" Exception:"+e);

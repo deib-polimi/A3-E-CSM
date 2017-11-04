@@ -3,7 +3,7 @@ package it.polimi.deib.deepse.a3e.middleware.domains;
 import android.content.Context;
 
 import it.polimi.deib.deepse.a3e.middleware.core.A3EFunction;
-import it.polimi.deib.deepse.a3e.middleware.core.Requirement;
+import it.polimi.deib.deepse.a3e.middleware.core.LocationRequirement;
 import it.polimi.deib.deepse.a3e.middleware.resolvers.AWSLambdaInvocationResolver;
 import it.polimi.deib.deepse.a3e.middleware.utils.Commons;
 
@@ -14,7 +14,7 @@ import it.polimi.deib.deepse.a3e.middleware.utils.Commons;
 public class AWSDomain extends Domain {
 
     public AWSDomain(Context context) {
-        super("72.21.214.144", "aws", new AWSLambdaInvocationResolver(context), Requirement.EVERYWHERE, Requirement.CLOUD, Requirement.FAST_COMPUTATION);
+        super("72.21.214.144", "aws", new AWSLambdaInvocationResolver(context), LocationRequirement.CLOUD);
     }
 
     @Override
@@ -22,6 +22,12 @@ public class AWSDomain extends Domain {
         this.latency = Commons.ping(getHost());
         return this.latency > 0;
     }
+
+    @Override
+    public long getComputationPower() {
+        return 5;
+    }
+
 
     @Override
     public void notifySelection(A3EFunction function) {

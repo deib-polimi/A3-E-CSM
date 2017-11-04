@@ -1,15 +1,16 @@
 package it.polimi.deib.deepse.a3e.middleware.core;
 
 import android.content.Context;
-import android.content.res.Resources;
 
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import it.polimi.deib.deepse.a3e.middleware.resolvers.InvocationResolver;
 import it.polimi.deib.deepse.a3e.middleware.resolvers.means.AWSInvocationMean;
 import it.polimi.deib.deepse.a3e.middleware.resolvers.means.InvocationMeanVisitor;
 import it.polimi.deib.deepse.a3e.middleware.resolvers.means.JSInvocationMean;
+import it.polimi.deib.deepse.a3e.middleware.resolvers.means.JavaInvocationMean;
 import it.polimi.deib.deepse.a3e.middleware.resolvers.means.RestInvocationMean;
 
 
@@ -21,14 +22,24 @@ public abstract class A3EFunction<T> implements InvocationMeanVisitor<T> {
 
     private Context context;
     private String uniqueName;
-    private Set<Requirement> requirements;
+    private Set<LocationRequirement> locationRequirements;
+    private ComputationRequirement computationRequirement;
+    private LatencyRequirement latencyRequirement;
+    private InvocationResolver localInvocationResolver;
 
-
-    public A3EFunction(Context context, String uniqueName, Requirement... requirements){
+    public A3EFunction(Context context, String uniqueName, ComputationRequirement computationRequirement,
+                       LatencyRequirement latencyRequirement, LocationRequirement... locationRequirements){
         this.uniqueName = uniqueName;
-        this.requirements = new HashSet<>(Arrays.asList(requirements));
+        this.locationRequirements = new HashSet<>(Arrays.asList(locationRequirements));
         this.context = context;
+        this.computationRequirement = computationRequirement;
+        this.latencyRequirement = latencyRequirement;
     }
+
+    public A3EFunction(Context context, String uniqueName, LocationRequirement... locationRequirements){
+        this(context, uniqueName, ComputationRequirement.FAST, LatencyRequirement.LOW, locationRequirements);
+    }
+
 
     protected void setCurrentContext(Context context){
         this.context = context;
@@ -42,8 +53,16 @@ public abstract class A3EFunction<T> implements InvocationMeanVisitor<T> {
         return uniqueName;
     }
 
-    public Set<Requirement> getRequirements() {
-        return new HashSet<>(requirements);
+    public ComputationRequirement getComputationRequirement() {
+        return computationRequirement;
+    }
+
+    public LatencyRequirement getLatencyRequirement() {
+        return latencyRequirement;
+    }
+
+    public Set<LocationRequirement> getLocationRequirements() {
+        return new HashSet<>(locationRequirements);
     }
 
     @Override
@@ -59,6 +78,19 @@ public abstract class A3EFunction<T> implements InvocationMeanVisitor<T> {
     @Override
     public void visit(JSInvocationMean<T> mean) {
         throw new RuntimeException("Not Supported");
+    }
+
+    @Override
+    public void visit(JavaInvocationMean<T> mean) {
+        throw new RuntimeException("Not Supported");
+    }
+
+    public InvocationResolver getLocalInvocationResolver(){
+        return localInvocationResolver;
+    }
+
+    protected void setLocalInvocationResolver(InvocationResolver localInvocationResolver){
+        this.localInvocationResolver = localInvocationResolver;
     }
 
     public interface Callback {

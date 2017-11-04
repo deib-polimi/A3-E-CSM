@@ -74,7 +74,6 @@ public class DomainManager {
                     domain.notifyRequirements(function);
                 }
             }
-
             A3ELog.append("*Awareness*", "available domains: "+availableDomains+" for function: "+function.getUniqueName());
 
 

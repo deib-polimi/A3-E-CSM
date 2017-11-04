@@ -3,17 +3,29 @@ package it.polimi.deib.deepse.a3e.client;
 import android.Manifest;
 import android.app.Activity;
 import android.content.pm.PackageManager;
+import android.content.res.AssetManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
-import android.widget.EditText;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -23,17 +35,17 @@ import it.polimi.deib.deepse.a3e.R;
 import it.polimi.deib.deepse.a3e.middleware.core.A3E;
 import it.polimi.deib.deepse.a3e.middleware.core.A3EFacade;
 import it.polimi.deib.deepse.a3e.middleware.core.A3EFunction;
-import it.polimi.deib.deepse.a3e.middleware.core.A3EJSFunction;
-import it.polimi.deib.deepse.a3e.middleware.core.Requirement;
 import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
 
-public class A3EClient extends AppCompatActivity implements A3ELog.Listener {
+public class A3EClient extends AppCompatActivity implements A3ELog.Listener, AdapterView.OnItemSelectedListener {
 
     private A3E a3e;
     private A3EFunction f1;
 
     private ExecutorService service = Executors.newFixedThreadPool(1);
     private File logFile;
+
+    private String selectedImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +55,15 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener {
         TextView logTextView = (TextView) findViewById(R.id.logTextView);
         logTextView.setMovementMethod(new ScrollingMovementMethod());
 
+        Spinner spinner = (Spinner) findViewById(R.id.imgSelector);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.images, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(this);
+
         requestPermission(this);
+
 
     }
 
@@ -64,19 +84,28 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener {
 
     public void execute(final View view){
 
-        final EditText payloadEditText  = (EditText) findViewById(R.id.payloadEditText);
-        String payload =  payloadEditText.getText().toString();
-
-        a3e.executeFunction(this, f1, payload, new A3EFunction.Callback() {
+        a3e.executeFunction(this, f1, selectedImage, new A3EFunction.Callback() {
             @Override
             public void onFunctionResult(final A3EFunction.FunctionResult result) {
                 TextView textView = (TextView) A3EClient.this.findViewById(R.id.resultTextView);
                 if (result.isSuccess()) {
-                    textView.setText(result.getStringResult());
+                    String response = result.getStringResult();
+                    if (response.startsWith("{")){
+                        JsonObject o = new JsonParser().parse(response).getAsJsonObject();
+                        JsonArray labels = o.getAsJsonArray("Labels");
+                        JsonObject bestResult = labels.get(0).getAsJsonObject();
+                        String res = bestResult.get("Name").getAsString() + ": " + bestResult.get("Confidence").getAsFloat()/100;
+                        textView.setText(res);
+
+                    }
+                    else {
+                        textView.setText(response);
+
+                    }
                 }
                 else {
-                    textView.setText("");
-                    Toast.makeText(A3EClient.this, "NO DOMAIN AVAILABLE", Toast.LENGTH_SHORT).show();
+                    textView.setText("-");
+                    Toast.makeText(A3EClient.this, "An error occurred", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -138,6 +167,31 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener {
 
     }
 
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        AssetManager assetManager = getAssets();
+        InputStream istr = null;
+        selectedImage = parent.getItemAtPosition(position)+".jpg";
+        try {
+            istr = assetManager.open(selectedImage);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Bitmap bitmap = BitmapFactory.decodeStream(istr);
+        imageView.setImageBitmap(bitmap);
+
+        TextView textView = (TextView) A3EClient.this.findViewById(R.id.resultTextView);
+        textView.setText("-");
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }
 /*
 {

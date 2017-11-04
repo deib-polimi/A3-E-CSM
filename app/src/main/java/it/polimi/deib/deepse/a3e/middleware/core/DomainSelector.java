@@ -1,9 +1,7 @@
 package it.polimi.deib.deepse.a3e.middleware.core;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import it.polimi.deib.deepse.a3e.middleware.domains.Domain;
 import it.polimi.deib.deepse.a3e.middleware.domains.ErrorDomain;
@@ -15,32 +13,54 @@ import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
 
 public class DomainSelector {
 
+    private static final float BASE = 5.0f;
 
-    public Domain selectDomainForRequirements(A3EFunction function, List<Domain> domains){
+    protected Domain selectDomainForRequirements(A3EFunction function, List<Domain> domains){
 
-        int maxMatches = 0;
-        int matchIndex = -1;
+        Domain res = null;
+        float maxLatency = 0;
+        float maxComputation = 0;
+        float maxScore = 0;
 
-        for (int i = 0; i < domains.size(); i++){
-            Domain domain = domains.get(i);
-            Set<Requirement> intersection = new HashSet<>(domain.getRequirements());
-            intersection.retainAll(function.getRequirements());
-            int matches = intersection.size();
-            if(maxMatches < matches){
-                maxMatches = intersection.size();
-                matchIndex = i;
+        List<Domain> candidates = new ArrayList<>();
+
+        for(Domain domain : domains){
+            if(function.getLocationRequirements().contains(domain.getLocationRequirement())) {
+                candidates.add(domain);
+                if(domain.getLatency() > maxLatency)
+                    maxLatency = domain.getLatency();
+                if(domain.getComputationPower() > maxComputation)
+                    maxComputation = domain.getComputationPower();
             }
         }
 
-        Domain domain;
-        if (matchIndex >= 0)
-            domain = domains.get(matchIndex);
-        else
-            domain = ErrorDomain.errorDomain();
+        for(Domain candidate : candidates){
+            int latencyWeight = function.getLatencyRequirement().value;
+            int computationWeight = function.getComputationRequirement().value;
 
-        A3ELog.append("*Domain Selection*", "host: "+domain+" for function: "+function.getUniqueName());
+            float latency = candidate.getLatency();
+            float computationPower = candidate.getComputationPower();
 
-        return domain;
+            float latencyScore = latencyWeight*((BASE-1)*(1.0f - latency/maxLatency)+1.0f);
+            float computationScore = computationWeight*(BASE)*computationPower/maxComputation;
+
+            float score = (latencyScore + computationScore) / (latencyWeight + computationWeight);
+
+            if (score > maxScore){
+                maxScore = score;
+                res = candidate;
+            }
+
+        }
+
+        if (res == null)
+            res = ErrorDomain.errorDomain();
+
+        A3ELog.append("*Domain Selection*", "host: "+res+" for function: "+function.getUniqueName());
+
+        return res;
     }
+
+
 
 }
