@@ -61,12 +61,12 @@ public class DiscoveryManager {
             e.printStackTrace();
         }
 
-        List<Domain> availableDomains = new ArrayList<>();
+        List<Domain> discoveredDomains = new ArrayList<>();
 
         for (Future<PingResponse> result : results) {
             try {
                 if (result.get().success) {
-                    availableDomains.add(result.get().domain);
+                    discoveredDomains.add(result.get().domain);
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -75,9 +75,9 @@ public class DiscoveryManager {
             }
         }
 
-        A3ELog.append("*Awareness*", "available domains: " + availableDomains);
+        A3ELog.append("*Discovery*", "discovered domains: " + discoveredDomains);
 
-        return availableDomains;
+        return discoveredDomains;
 
     }
 

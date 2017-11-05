@@ -15,18 +15,18 @@ public class IdentificationManager {
 
     public List<Domain> identify(A3EFunction function, List<Domain> domains){
 
-        List<Domain> properDomains = new ArrayList<>();
+        List<Domain> availableDomains = new ArrayList<>();
 
         for (Domain domain : domains) {
             if (domain.notifyRequirements(function)){
-                properDomains.add(domain);
+                availableDomains.add(domain);
             }
         }
 
-        A3ELog.append("*Identification*", "proper domains: " + properDomains);
+        A3ELog.append("*Identification*", "available domains: " + availableDomains);
 
 
-        return properDomains;
+        return availableDomains;
     }
 
 }
