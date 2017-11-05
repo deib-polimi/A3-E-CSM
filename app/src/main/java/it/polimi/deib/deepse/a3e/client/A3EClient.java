@@ -11,6 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -41,6 +42,7 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
 
     private A3E a3e;
     private A3EFunction prodFunction;
+    private A3EFunction pingFunction;
 
     private ExecutorService service = Executors.newFixedThreadPool(1);
     private File logFile;
@@ -77,12 +79,20 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
         a3e = new A3EFacade(this);
         // create function
         prodFunction = new ProdFunction(this);
+        pingFunction = new PingFunction(this);
         // register function
         a3e.registerFunction(prodFunction);
+        a3e.registerFunction(pingFunction);
+
     }
 
     public void execute(final View view){
-
+        a3e.executeFunction(this, pingFunction, "zzz", new A3EFunction.Callback() {
+            @Override
+            public void onFunctionResult(A3EFunction.FunctionResult result) {
+                Log.d("ZZZ", "zzz");
+            }
+        });
         a3e.executeFunction(this, prodFunction, selectedImage, new A3EFunction.Callback() {
             @Override
             public void onFunctionResult(final A3EFunction.FunctionResult result) {
