@@ -5,6 +5,7 @@ import java.util.List;
 
 import it.polimi.deib.deepse.a3e.middleware.core.A3EFunction;
 import it.polimi.deib.deepse.a3e.middleware.domains.Domain;
+import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
 
 /**
  * Created by Giovanni on 05/11/17.
@@ -21,6 +22,9 @@ public class IdentificationManager {
                 properDomains.add(domain);
             }
         }
+
+        A3ELog.append("*Identification*", "proper domains: " + properDomains);
+
 
         return properDomains;
     }

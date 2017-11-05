@@ -57,7 +57,7 @@ public class SelectionManager {
         if (res == null)
             res = ErrorDomain.errorDomain();
 
-        A3ELog.append("*Domain Selection*", "host: "+res+" for function: "+function.getUniqueName());
+        A3ELog.append("*Selection*", "host: "+res+" for function: "+function.getUniqueName());
 
         return res;
     }

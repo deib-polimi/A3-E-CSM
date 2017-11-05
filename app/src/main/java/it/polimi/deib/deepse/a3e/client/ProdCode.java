@@ -6,6 +6,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
@@ -26,7 +31,6 @@ import it.polimi.deib.deepse.a3e.middleware.resolvers.means.JavaInvocationMean;
 public class ProdCode implements JavaInvocationMean.Runnable<String> {
 
     static {
-
         if(!OpenCVLoader.initDebug()){
             Log.d("OPENCV", "OpenCV not loaded");
         } else {
@@ -94,12 +98,26 @@ public class ProdCode implements JavaInvocationMean.Runnable<String> {
 
         detections = detections.reshape(1, (int)detections.total() / 7);
 
+
+        return toJson(detections).toString();
+    }
+
+    private String toJson(Mat detections){
+        JsonObject json = new JsonObject();
+        JsonArray features = new JsonArray();
+        json.add("Labels", features);
+
         for (int i = 0; i < detections.rows(); ++i) {
             double confidence = detections.get(i, 2)[0];
             int classId = (int)detections.get(i, 1)[0];
-            return classNames[classId] + ": " + confidence;
-        }
 
-        return "Unknown";
+            String label = classNames[classId].substring(0, 1).toUpperCase() + classNames[classId].substring(1);
+
+            JsonObject feature = new JsonObject();
+            feature.addProperty("Name", label);
+            feature.addProperty("Confidence", confidence*100);
+            features.add(feature);
+        }
+        return json.toString();
     }
 }

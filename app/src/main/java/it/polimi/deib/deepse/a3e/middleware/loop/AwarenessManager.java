@@ -27,10 +27,11 @@ public class AwarenessManager {
     private ExecutorService pool;
 
     public AwarenessManager(Context context){
+
         domains =  Collections.synchronizedList(new ArrayList<Domain>());
         domains.add(new LocalDomain());
-        //domains.add(new AWSDomain(context));
         domains.add(new AWSRestDomain("https://q8i5t5834m.execute-api.us-west-2.amazonaws.com/"));
+        //domains.add(new AWSDomain(context));
 
         pool = Executors.newFixedThreadPool(domains.size());
 

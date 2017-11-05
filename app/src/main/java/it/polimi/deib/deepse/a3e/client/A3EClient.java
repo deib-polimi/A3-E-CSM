@@ -40,7 +40,7 @@ import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
 public class A3EClient extends AppCompatActivity implements A3ELog.Listener, AdapterView.OnItemSelectedListener {
 
     private A3E a3e;
-    private A3EFunction f1;
+    private A3EFunction prodFunction;
 
     private ExecutorService service = Executors.newFixedThreadPool(1);
     private File logFile;
@@ -64,7 +64,6 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
 
         requestPermission(this);
 
-
     }
 
     private void startA3E(){
@@ -77,31 +76,24 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
         // create A3E
         a3e = new A3EFacade(this);
         // create function
-        f1 = new ProdFunction(this);
+        prodFunction = new ProdFunction(this);
         // register function
-        a3e.registerFunction(f1);
+        a3e.registerFunction(prodFunction);
     }
 
     public void execute(final View view){
 
-        a3e.executeFunction(this, f1, selectedImage, new A3EFunction.Callback() {
+        a3e.executeFunction(this, prodFunction, selectedImage, new A3EFunction.Callback() {
             @Override
             public void onFunctionResult(final A3EFunction.FunctionResult result) {
                 TextView textView = (TextView) A3EClient.this.findViewById(R.id.resultTextView);
                 if (result.isSuccess()) {
                     String response = result.getStringResult();
-                    if (response.startsWith("{")){
-                        JsonObject o = new JsonParser().parse(response).getAsJsonObject();
-                        JsonArray labels = o.getAsJsonArray("Labels");
-                        JsonObject bestResult = labels.get(0).getAsJsonObject();
-                        String res = bestResult.get("Name").getAsString() + ": " + bestResult.get("Confidence").getAsFloat()/100;
-                        textView.setText(res);
-
-                    }
-                    else {
-                        textView.setText(response);
-
-                    }
+                    JsonObject o = new JsonParser().parse(response).getAsJsonObject();
+                    JsonArray labels = o.getAsJsonArray("Labels");
+                    JsonObject bestResult = labels.get(0).getAsJsonObject();
+                    String res = bestResult.get("Name").getAsString() + ": " + bestResult.get("Confidence").getAsInt()+"%";
+                    textView.setText(res);
                 }
                 else {
                     textView.setText("-");
@@ -193,11 +185,3 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
 
     }
 }
-/*
-{
-    "name" : "Giovanni",
-    "place" : "Cyprus"
-}
-*/
-
-// {'name' : 'Michele', 'place' : 'Cyprus'}
