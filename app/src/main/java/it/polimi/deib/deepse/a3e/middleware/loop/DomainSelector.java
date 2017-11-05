@@ -12,7 +12,7 @@ import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
  * Created by giovanniquattrocchi on 30/10/17.
  */
 
-public class SelectionManager {
+public class DomainSelector {
 
     private static final float BASE = 5.0f;
 

@@ -21,12 +21,12 @@ import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
  * Created by Giovanni on 05/11/17.
  */
 
-public class AwarenessManager {
+public class DiscoveryManager {
 
     private List<Domain> domains;
     private ExecutorService pool;
 
-    public AwarenessManager(Context context){
+    public DiscoveryManager(Context context){
 
         domains =  Collections.synchronizedList(new ArrayList<Domain>());
         domains.add(new LocalDomain());
