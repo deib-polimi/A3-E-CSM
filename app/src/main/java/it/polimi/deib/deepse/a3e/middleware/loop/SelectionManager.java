@@ -1,8 +1,9 @@
-package it.polimi.deib.deepse.a3e.middleware.core;
+package it.polimi.deib.deepse.a3e.middleware.loop;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import it.polimi.deib.deepse.a3e.middleware.core.A3EFunction;
 import it.polimi.deib.deepse.a3e.middleware.domains.Domain;
 import it.polimi.deib.deepse.a3e.middleware.domains.ErrorDomain;
 import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
@@ -11,11 +12,11 @@ import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
  * Created by giovanniquattrocchi on 30/10/17.
  */
 
-public class DomainSelector {
+public class SelectionManager {
 
     private static final float BASE = 5.0f;
 
-    protected Domain selectDomainForRequirements(A3EFunction function, List<Domain> domains){
+    public Domain selectDomainForRequirements(A3EFunction function, List<Domain> domains){
 
         Domain res = null;
         float maxLatency = 0;
