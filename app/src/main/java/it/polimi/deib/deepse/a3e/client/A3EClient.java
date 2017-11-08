@@ -70,7 +70,7 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
     private void startA3E(){
 
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("YY.MM.dd.HH.mm.ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yy.MM.dd.HH.mm.ss");
         logFile = Utils.createFile("experiment-" + sdf.format(date) + ".log");
 
         A3ELog.addListener(this);
