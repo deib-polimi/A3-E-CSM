@@ -14,9 +14,6 @@ import it.polimi.deib.deepse.a3e.middleware.core.A3E;
 
 public class BatteryMonitor extends BroadcastReceiver {
 
-    public BatteryMonitor(Context context){
-//        context.registerReceiver(this, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-    }
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -26,6 +23,7 @@ public class BatteryMonitor extends BroadcastReceiver {
         float batteryPct = level / (float)scale;
 
         A3ELog.append("*Battery Level*", "value: "+batteryPct);
-
     }
+
+
 }

@@ -27,17 +27,23 @@ import it.polimi.deib.deepse.a3e.middleware.resolvers.means.RestInvocationMean;
 public class RESTInvocationResolver implements InvocationResolver {
 
     private String host;
+    private boolean isHttps;
     public RESTInvocationResolver(String host){
         this.host = host;
+        if (host.contains("https"))
+            isHttps = true;
+        else
+            isHttps = false;
     }
 
     @Override
     public <T> A3EFunction.FunctionResult invoke(A3EFunction<T> function, T payload) {
         try {
             URL u = new URL(host+function.getUniqueName());
-            HttpsURLConnection connection = (HttpsURLConnection) u.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) u.openConnection();
             RestInvocationMean<T> mean = new RestInvocationMean<>(payload, connection);
             mean.accept(function);
+            int status = connection.getResponseCode();
             String res = IOUtils.toString(connection.getInputStream(), Charset.forName("UTF-8"));
             return new A3EFunction.FunctionResult(res);
         } catch (Exception e) {

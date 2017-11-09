@@ -19,7 +19,7 @@ public class AWSDomain extends Domain {
 
     @Override
     public synchronized boolean ping() {
-        this.latency = Commons.ping(getHost());
+        this.latency = Commons.ping(getIp());
         return this.latency > 0;
     }
 

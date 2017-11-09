@@ -7,7 +7,8 @@ import it.polimi.deib.deepse.a3e.middleware.core.LocationRequirement;
  */
 
 public class EdgeRestDomain extends RestDomain {
-    protected EdgeRestDomain(String ip, String host) {
+
+    public EdgeRestDomain(String ip, String host) {
         super(ip, host, LocationRequirement.EDGE);
     }
 

@@ -11,6 +11,9 @@ public interface A3E {
     public void registerFunction(A3EFunction function);
 
     public <T> void executeFunction(Activity activity, A3EFunction<T> function, T payload, A3EFunction.Callback callback);
+
+    public void quit();
+
 }
 
 

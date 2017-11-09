@@ -46,15 +46,15 @@ public abstract class Domain {
                 long f = System.currentTimeMillis();
 
                 A3ELog.append("*Function Executed*", "name: "+function.getUniqueName()+" in domain: "+host+" with latency: "+(f-i));
-
-                activity.runOnUiThread(
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                callback.onFunctionResult(result);
+                if (callback != null)
+                    activity.runOnUiThread(
+                            new Runnable() {
+                                @Override
+                                public void run() {
+                                    callback.onFunctionResult(result);
+                                }
                             }
-                        }
-                );
+                    );
             }
         });
     }

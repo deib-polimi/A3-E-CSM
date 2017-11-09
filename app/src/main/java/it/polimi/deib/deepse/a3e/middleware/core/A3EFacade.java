@@ -3,10 +3,10 @@ package it.polimi.deib.deepse.a3e.middleware.core;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.SyncAdapterType;
+import android.content.Intent;
+import android.content.IntentFilter;
 
 import it.polimi.deib.deepse.a3e.middleware.domains.Domain;
-import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
 import it.polimi.deib.deepse.a3e.middleware.utils.BatteryMonitor;
 
 /**
@@ -15,12 +15,16 @@ import it.polimi.deib.deepse.a3e.middleware.utils.BatteryMonitor;
 
 public class A3EFacade implements A3E {
 
-    private DomainManager manager;
+    private A3EManager manager;
     private BroadcastReceiver batteryReceiver;
+    private Context context;
 
     public A3EFacade(Context context){
-        manager = new DomainManager(context);
-        batteryReceiver = new BatteryMonitor(context);
+        this.context = context;
+        manager = new A3EManager(context);
+        batteryReceiver = new BatteryMonitor();
+        context.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+
     }
 
     @Override
@@ -34,4 +38,12 @@ public class A3EFacade implements A3E {
         Domain domain = manager.getSelectedDomain(function);
         domain.executeFunction(activity, function, payload, callback);
     }
+
+    @Override
+    public void quit() {
+        context.unregisterReceiver(batteryReceiver);
+        manager = null;
+    }
+
+
 }

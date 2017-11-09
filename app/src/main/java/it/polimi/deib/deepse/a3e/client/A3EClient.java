@@ -2,18 +2,23 @@ package it.polimi.deib.deepse.a3e.client;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -27,9 +32,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Stream;
 
 import it.polimi.deib.deepse.a3e.R;
 import it.polimi.deib.deepse.a3e.middleware.core.A3E;
@@ -40,17 +47,25 @@ import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
 public class A3EClient extends AppCompatActivity implements A3ELog.Listener, AdapterView.OnItemSelectedListener {
 
     private A3E a3e;
-    private A3EFunction f1;
+    private A3EFunction prodFunction;
+    private A3EFunction pingFunction;
 
     private ExecutorService service = Executors.newFixedThreadPool(1);
     private File logFile;
 
     private String selectedImage;
 
+    private PowerManager.WakeLock wakeLock;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_a3_eclient);
+
+
+        PowerManager powerManager = (PowerManager)this.getSystemService(Context.POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "My Lock");
+        wakeLock.acquire();
 
         TextView logTextView = (TextView) findViewById(R.id.logTextView);
         logTextView.setMovementMethod(new ScrollingMovementMethod());
@@ -67,6 +82,14 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
 
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        wakeLock.release();
+        a3e.quit();
+    }
+
+
     private void startA3E(){
 
         Date date = new Date();
@@ -77,33 +100,30 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
         // create A3E
         a3e = new A3EFacade(this);
         // create function
-        f1 = new ProdFunction(this);
+        prodFunction = new ProdFunction(this);
+        pingFunction = new PingFunction(this);
         // register function
-        a3e.registerFunction(f1);
+        a3e.registerFunction(prodFunction);
+
+
+
+
     }
 
-    public void execute(final View view){
+    public void execute(final View view) {
 
-        a3e.executeFunction(this, f1, selectedImage, new A3EFunction.Callback() {
+        a3e.executeFunction(this, prodFunction, selectedImage, new A3EFunction.Callback() {
             @Override
             public void onFunctionResult(final A3EFunction.FunctionResult result) {
                 TextView textView = (TextView) A3EClient.this.findViewById(R.id.resultTextView);
                 if (result.isSuccess()) {
                     String response = result.getStringResult();
-                    if (response.startsWith("{")){
-                        JsonObject o = new JsonParser().parse(response).getAsJsonObject();
-                        JsonArray labels = o.getAsJsonArray("Labels");
-                        JsonObject bestResult = labels.get(0).getAsJsonObject();
-                        String res = bestResult.get("Name").getAsString() + ": " + bestResult.get("Confidence").getAsFloat()/100;
-                        textView.setText(res);
-
-                    }
-                    else {
-                        textView.setText(response);
-
-                    }
-                }
-                else {
+                    JsonObject o = new JsonParser().parse(response).getAsJsonObject();
+                    JsonArray labels = o.getAsJsonArray("Labels");
+                    JsonObject bestResult = labels.get(0).getAsJsonObject();
+                    String res = bestResult.get("Name").getAsString() + ": " + bestResult.get("Confidence").getAsInt() + "%";
+                    textView.setText(res);
+                } else {
                     textView.setText("-");
                     Toast.makeText(A3EClient.this, "An error occurred", Toast.LENGTH_SHORT).show();
                 }
@@ -111,21 +131,35 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
         });
     }
 
+    public void runTest(final View view){
+
+        EditText editText = (EditText) findViewById(R.id.callInterval);
+        int tCall = Integer.parseInt(editText.getText().toString());
+        editText = (EditText) findViewById(R.id.numCalls);
+        int numCalls = Integer.parseInt(editText.getText().toString());
+        editText = (EditText) findViewById(R.id.phaseInterval);
+        int tPhase = Integer.parseInt(editText.getText().toString());
+        editText = (EditText) findViewById(R.id.numPhases);
+        int numPhases = Integer.parseInt(editText.getText().toString());
+
+        Test1.TestParameters parameters = new Test1.TestParameters(tCall, numCalls, numPhases, tPhase);
+
+        Test1 test1 = new Test1(a3e, this, prodFunction, "bird.jpg", parameters);
+        test1.start();
+        view.setEnabled(false);
+        ((Button)view).setText("Running...");
+
+    }
+
     @Override
     public void onLogUpdate(final String message) {
 
         final TextView logTextView = (TextView) findViewById(R.id.logTextView);
 
-        service.execute(new Runnable() {
-            @Override
-            public void run() {
-                Utils.writeToFile(logFile, message+"\n");
-            }
-        });
-
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                Utils.writeToFile(logFile, message+"\n");
                 logTextView.append(message + "\n");
                 logTextView.post(new Runnable() {
                     @Override
@@ -193,11 +227,3 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
 
     }
 }
-/*
-{
-    "name" : "Giovanni",
-    "place" : "Cyprus"
-}
-*/
-
-// {'name' : 'Michele', 'place' : 'Cyprus'}

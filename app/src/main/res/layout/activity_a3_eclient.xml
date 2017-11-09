@@ -29,19 +29,66 @@
         android:text="-"
         android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/executeButton"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="execute"
-        android:onClick="execute" />
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/executeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="execute"
+            android:onClick="execute" />
 
 
+    </LinearLayout>
     <TextView
         android:layout_weight="1"
         android:id="@+id/logTextView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:text="" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/callInterval"
+            android:inputType="number"
+            android:hint="tCall"
+            />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/numCalls"
+            android:inputType="number"
+            android:hint="#calls"
+            />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/numPhases"
+            android:inputType="number"
+            android:hint="#phases"
+            />
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/phaseInterval"
+            android:inputType="number"
+            android:hint="tPhase"
+            />
+        <Button
+            android:id="@+id/runTestButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="run test"
+            android:onClick="runTest" />
+    </LinearLayout>
 
 </LinearLayout>
