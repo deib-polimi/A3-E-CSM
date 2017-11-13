@@ -16,7 +16,7 @@ public class A3ELog {
 
     public static synchronized void append(String what, String message){
         Date date = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yy/MM//dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yy/MM/dd HH:mm:ss");
         System.out.println();
         message = sdf.format(date)+" "+what+" - "+message;
         log.add(message);

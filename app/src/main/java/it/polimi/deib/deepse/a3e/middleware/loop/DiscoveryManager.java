@@ -31,7 +31,7 @@ public class DiscoveryManager {
 
         domains =  Collections.synchronizedList(new ArrayList<Domain>());
         //domains.add(new LocalDomain());
-        //domains.add(new AWSRestDomain("https://q8i5t5834m.execute-api.us-west-2.amazonaws.com/"));
+        domains.add(new AWSRestDomain("https://q8i5t5834m.execute-api.us-west-2.amazonaws.com/"));
         //domains.add(new AWSDomain(context));
         domains.add(new EdgeRestDomain("131.175.135.184", "http://131.175.135.184:3002/api/v1/namespaces/guest/actions/"));
         pool = Executors.newFixedThreadPool(domains.size());

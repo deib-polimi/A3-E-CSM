@@ -117,12 +117,12 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
             public void onFunctionResult(final A3EFunction.FunctionResult result) {
                 TextView textView = (TextView) A3EClient.this.findViewById(R.id.resultTextView);
                 if (result.isSuccess()) {
-                    String response = result.getStringResult();
+                    /*String response = result.getStringResult();
                     JsonObject o = new JsonParser().parse(response).getAsJsonObject();
                     JsonArray labels = o.getAsJsonArray("Labels");
                     JsonObject bestResult = labels.get(0).getAsJsonObject();
-                    String res = bestResult.get("Name").getAsString() + ": " + bestResult.get("Confidence").getAsInt() + "%";
-                    textView.setText(res);
+                    String res = bestResult.get("Name").getAsString() + ": " + bestResult.get("Confidence").getAsInt() + "%";*/
+                    textView.setText(result.getStringResult());
                 } else {
                     textView.setText("-");
                     Toast.makeText(A3EClient.this, "An error occurred", Toast.LENGTH_SHORT).show();

@@ -35,10 +35,16 @@ public class Test1 {
         this.parameters = param;
     }
 
+    public String toString(){
+        return "test with parameters: ("+parameters.toString()+")";
+    }
+
     public void start(){
         handlerThread.start();
         handler = new Handler(handlerThread.getLooper());
         handler.postDelayed(new TestRun(), 5000);
+        A3ELog.append("*TEST*", "start "+this);
+
     }
 
 
@@ -67,7 +73,7 @@ public class Test1 {
                             if (phase < parameters.PHASES)
                                 handler.postDelayed(self, 0);
                             else {
-                                A3ELog.append("Test1", "END");
+                                A3ELog.append("*TEST*", "end");
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -100,6 +106,10 @@ public class Test1 {
             this.CALL_PER_PHASE = callPerPhase;
             this.PHASES = phases;
             this.SLEEP_BETWEEN_PHASES = sleepBetweenPhases;
+        }
+
+        public String toString(){
+            return "tCall: "+CALL_INTERVAL+" nCalls: "+CALL_PER_PHASE+" nPhases: "+PHASES+" tPhase: "+SLEEP_BETWEEN_PHASES;
         }
 
     }

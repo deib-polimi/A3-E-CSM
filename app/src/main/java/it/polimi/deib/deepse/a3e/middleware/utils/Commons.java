@@ -20,7 +20,7 @@ public class Commons {
     public static final int NUM_THREAD_PER_DOMAIN = 10;
     public static final int DOMAIN_AWARENESS_TIME_SAMPLE = 2;
 
-    public static long ping(final String host){
+    public static synchronized long ping(final String host){
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Future<Long> future = executor.submit(new Callable<Long>() {
