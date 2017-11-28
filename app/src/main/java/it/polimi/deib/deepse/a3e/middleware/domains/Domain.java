@@ -47,14 +47,17 @@ public abstract class Domain {
 
                 A3ELog.append("*Function Executed*", "name: "+function.getUniqueName()+" in domain: "+host+" with latency: "+(f-i));
                 if (callback != null)
-                    activity.runOnUiThread(
-                            new Runnable() {
-                                @Override
-                                public void run() {
-                                    callback.onFunctionResult(result);
+                    if (activity != null)
+                        activity.runOnUiThread(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callback.onFunctionResult(result);
+                                    }
                                 }
-                            }
-                    );
+                        );
+                    else
+                        callback.onFunctionResult(result);
             }
         });
     }

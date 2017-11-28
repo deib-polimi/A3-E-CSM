@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="it.polimi.deib.deepse.a3e.client.A3ETestClient">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <EditText
+            android:textAlignment="center"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/callInterval"
+            android:inputType="numberDecimal"
+            android:hint="Call interval"
+            />
+        <EditText
+            android:textAlignment="center"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:id="@+id/numCalls"
+            android:inputType="number"
+            android:hint="Number of calls"
+            />
+        <!---
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/numPhases"
+        android:inputType="number"
+        android:hint="#phases"
+        />
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/phaseInterval"
+        android:inputType="number"
+        android:hint="tPhase"
+        />
+       -->
+        <Button
+            android:id="@+id/runTestButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="run test"
+            android:onClick="runTest" />
+    </LinearLayout>
+
+    <CheckBox
+        android:id="@+id/localCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Local Domain"
+        android:onClick="manageCheckbox"
+        />
+    <CheckBox
+        android:id="@+id/edgeLocalCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edge Local Domain"
+        android:onClick="manageCheckbox"
+        />
+    <CheckBox
+        android:id="@+id/mobileEdgeCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Edge Mobile Domain"
+        android:onClick="manageCheckbox"
+        />
+    <CheckBox
+        android:id="@+id/cloudCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cloud Domain"
+        android:onClick="manageCheckbox"
+        />
+
+</LinearLayout>

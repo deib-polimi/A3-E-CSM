@@ -17,10 +17,15 @@
         <activity android:name=".client.A3EClient">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".client.A3ETestClient">
+
+        </activity>
+        <service android:name=".client.A3ETestService" />
+        <service android:name=".middleware.utils.UDPListenerService" />
+
     </application>
 
 </manifest>

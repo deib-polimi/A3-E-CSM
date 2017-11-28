@@ -24,7 +24,22 @@ public class A3EFacade implements A3E {
         manager = new A3EManager(context);
         batteryReceiver = new BatteryMonitor();
         context.registerReceiver(batteryReceiver, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+    }
 
+
+    @Override
+    public void start() {
+        manager.start();
+    }
+
+    @Override
+    public void registerDomain(Domain domain) {
+        manager.registerDomain(domain);
+    }
+
+    @Override
+    public void unRegisterDomain(Domain domain) {
+        manager.unRegisterDomain(domain);
     }
 
     @Override

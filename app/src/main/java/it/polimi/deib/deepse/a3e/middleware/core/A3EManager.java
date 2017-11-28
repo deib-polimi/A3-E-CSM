@@ -3,6 +3,7 @@ package it.polimi.deib.deepse.a3e.middleware.core;
 import android.content.Context;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Process;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,18 +40,28 @@ public class A3EManager {
 
         functions =  Collections.synchronizedMap(new HashMap<A3EFunction, Domain>());
 
-        handlerThread = new HandlerThread("A3EManager");
+        handlerThread = new HandlerThread("A3EManager", Process.THREAD_PRIORITY_BACKGROUND);
         handlerThread.start();
 
         handler = new Handler(handlerThread.getLooper());
 
+    }
+
+    public void start(){
         handler.postDelayed(new Runnable(){
             public void run(){
                 controlLoop();
                 handler.postDelayed(this, Commons.DOMAIN_AWARENESS_TIME_SAMPLE*1000);
             }
         }, 0);
+    }
 
+    public synchronized void registerDomain(Domain domain){
+        discoveryManager.registerDomain(domain);
+    }
+
+    public synchronized void unRegisterDomain(Domain domain){
+        discoveryManager.unRegisterDomain(domain);
     }
 
     public synchronized void registerFunction(A3EFunction function){
@@ -72,7 +83,6 @@ public class A3EManager {
             List<Domain> properDomain = identificationManager.identify(function, availableDomains);
             Domain selectedDomain = domainSelector.selectDomainForRequirements(function, properDomain);
             functions.put(function, selectedDomain);
-
         }
     }
 

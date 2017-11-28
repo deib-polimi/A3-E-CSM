@@ -38,6 +38,11 @@ public class ProdFunction extends A3EFunction<String> {
     }
 
     @Override
+    public String getRepo(){
+        return "https://github.com/mgarriga/example-lambda";
+    }
+
+    @Override
     public void visit(RestInvocationMean<String> mean) {
         /*
         try {

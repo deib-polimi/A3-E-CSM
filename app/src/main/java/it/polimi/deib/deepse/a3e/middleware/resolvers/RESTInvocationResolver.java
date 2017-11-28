@@ -14,6 +14,13 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -26,30 +33,41 @@ import it.polimi.deib.deepse.a3e.middleware.resolvers.means.RestInvocationMean;
 
 public class RESTInvocationResolver implements InvocationResolver {
 
+    public int TIMEOUT = 3;
     private String host;
-    private boolean isHttps;
+
     public RESTInvocationResolver(String host){
         this.host = host;
-        if (host.contains("https"))
-            isHttps = true;
-        else
-            isHttps = false;
     }
 
     @Override
-    public <T> A3EFunction.FunctionResult invoke(A3EFunction<T> function, T payload) {
-        try {
-            URL u = new URL(host+function.getUniqueName());
-            HttpURLConnection connection = (HttpURLConnection) u.openConnection();
-            RestInvocationMean<T> mean = new RestInvocationMean<>(payload, connection);
-            mean.accept(function);
-            int status = connection.getResponseCode();
-            String res = IOUtils.toString(connection.getInputStream(), Charset.forName("UTF-8"));
-            return new A3EFunction.FunctionResult(res);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public <T> A3EFunction.FunctionResult invoke(final A3EFunction<T> function, final T payload) {
 
-        return new A3EFunction.FunctionResult();
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            Future<A3EFunction.FunctionResult> future = executor.submit(new Callable<A3EFunction.FunctionResult>() {
+                @Override
+                public A3EFunction.FunctionResult call() throws Exception {
+                    try {
+                        URL u = new URL(host+function.getUniqueName());
+                        HttpURLConnection connection = (HttpURLConnection) u.openConnection();
+                        connection.setConnectTimeout(TIMEOUT*1000);
+                        connection.setReadTimeout(TIMEOUT*1000);
+                        RestInvocationMean<T> mean = new RestInvocationMean<>(payload, connection);
+                        mean.accept(function);
+                        int status = connection.getResponseCode();
+                        String res = IOUtils.toString(connection.getInputStream(), Charset.forName("UTF-8"));
+                        return new A3EFunction.FunctionResult(res);
+                    }
+                    catch (Exception e) {
+                       return new A3EFunction.FunctionResult();
+                    }
+                }});
+
+        try {
+            A3EFunction.FunctionResult out = future.get(TIMEOUT, TimeUnit.SECONDS);
+            return out;
+        } catch (Exception e) {
+            return new A3EFunction.FunctionResult();
+        }
     }
 }

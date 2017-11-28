@@ -13,7 +13,6 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,27 +23,22 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Stream;
 
 import it.polimi.deib.deepse.a3e.R;
 import it.polimi.deib.deepse.a3e.middleware.core.A3E;
 import it.polimi.deib.deepse.a3e.middleware.core.A3EFacade;
 import it.polimi.deib.deepse.a3e.middleware.core.A3EFunction;
+import it.polimi.deib.deepse.a3e.middleware.domains.EdgeRestDomain;
 import it.polimi.deib.deepse.a3e.middleware.utils.A3ELog;
 
-public class A3EClient extends AppCompatActivity implements A3ELog.Listener, AdapterView.OnItemSelectedListener {
+public class A3EClient extends AppCompatActivity implements A3ELog.Listener, AdapterView.OnItemSelectedListener, A3ETest.Listener {
 
     private A3E a3e;
     private A3EFunction prodFunction;
@@ -99,12 +93,16 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
         A3ELog.addListener(this);
         // create A3E
         a3e = new A3EFacade(this);
+
         // create function
         prodFunction = new ProdFunction(this);
-        pingFunction = new PingFunction(this);
+        //pingFunction = new PingFunction(this);
         // register function
         a3e.registerFunction(prodFunction);
 
+        //a3e.registerDomain(new LocalDomain());
+        //a3e.registerDomain(new EdgeRestDomain("131.175.135.184", "http://131.175.135.184:3002/api/v1/namespaces/guest/actions/"));
+        a3e.start();
 
 
 
@@ -142,10 +140,13 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
         editText = (EditText) findViewById(R.id.numPhases);
         int numPhases = Integer.parseInt(editText.getText().toString());
 
-        Test1.TestParameters parameters = new Test1.TestParameters(tCall, numCalls, numPhases, tPhase);
+        A3ETest.Parameters parameters = new A3ETest.Parameters(tCall, numCalls, numPhases, tPhase);
 
-        Test1 test1 = new Test1(a3e, this, prodFunction, "bird.jpg", parameters);
-        test1.start();
+        A3ETest test = new A3ETest(a3e, this, prodFunction, "person.jpg");
+        test.setParameters(parameters);
+        test.addListener(this);
+        test.start();
+
         view.setEnabled(false);
         ((Button)view).setText("Running...");
 
@@ -198,7 +199,6 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
         } else {
             Toast.makeText(this, "The app was not allowed to write to your storage. Hence, it cannot function properly. Please consider granting it this permission", Toast.LENGTH_LONG).show();
         }
-
     }
 
 
@@ -225,5 +225,10 @@ public class A3EClient extends AppCompatActivity implements A3ELog.Listener, Ada
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
+    }
+
+    @Override
+    public void onTestEnd() {
+        finish();
     }
 }
