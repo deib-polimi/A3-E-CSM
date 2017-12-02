@@ -28,8 +28,8 @@ public class WorldSimulator {
     private final int internetOnToOffProbability = 22;
     private final int internetOffToOnProbability = 166;
 
-    private final int edgeOnToOffProbability = 333;
-    private final int edgeOffToOnProbability = 666;
+    private final int edgeOnToOffProbability = 33;
+    private final int edgeOffToOnProbability = 66;
 
     private final int base = 10000;
 
